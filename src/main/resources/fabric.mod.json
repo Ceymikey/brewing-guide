@@ -1,0 +1,46 @@
+{
+	"schemaVersion": 1,
+	"id": "brewing-guide",
+	"version": "${version}",
+	"name": "Brewing Guide",
+	"description": "Shows you all potion recipes without you having to open google all the time.",
+	"authors": [
+		"Ceymikey"
+	],
+	"contact": {
+		"homepage": "https://ceymikey.dev/",
+		"sources": "https://github.com/Ceymikey/brewing-guide",
+		"issues": "https://github.com/Ceymikey/brewing-guide/issues",
+		"discord": "https://discord.gg/MPuQEeZB4w"
+	},
+	"license": "apache-2.0",
+	"icon": "assets/brewing-guide/icon.png",
+	"environment": "client",
+	"entrypoints": {
+		"main": [
+			"dev.ceymikey.BrewingGuide"
+		],
+		"fabric-datagen": [
+			"dev.ceymikey.BrewingGuideDataGenerator"
+		]
+	},
+	"mixins": [
+		"brewing-guide.mixins.json"
+	],
+	"custom": {
+		"modmenu": {
+			"links": {
+				"modmenu.discord": "https://discord.gg/MPuQEeZB4w"
+			}
+		}
+	},
+	"depends": {
+		"fabricloader": ">=0.16.13",
+		"minecraft": "~1.20.4",
+		"java": ">=17",
+		"fabric-api": "*"
+	},
+	"suggests": {
+		"another-mod": "*"
+	}
+}
