@@ -597,6 +597,7 @@ public abstract class BrewingStandScreenMixin extends HandledScreen<BrewingStand
         return super.mouseReleased(mouseX, mouseY, button);
     }
 
+    //? if =1.20.4 {
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
         // Only handle scrolling when mouse is over the recipe panel
@@ -620,6 +621,31 @@ public abstract class BrewingStandScreenMixin extends HandledScreen<BrewingStand
 
         return super.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount);
     }
+    //?} elif =1.20.1 {
+    /*@Override
+    public boolean mouseScrolled(double mouseX, double mouseY, double amount) {
+        // Only handle scrolling when mouse is over the recipe panel
+        int leftPos = (this.width - this.backgroundWidth) / 2;
+        int topPos = (this.height - this.backgroundHeight) / 2;
+
+        if (mouseX >= leftPos + 176 && mouseX <= leftPos + 176 + RECIPE_PANEL_WIDTH &&
+                mouseY >= topPos + 25 && mouseY <= topPos + 25 + 140) {
+
+            // Calculate total content height
+            int totalHeight = calculateTotalContentHeight();
+            int visibleHeight = 140;
+
+            if (totalHeight > visibleHeight) {
+                int maxScroll = (totalHeight - visibleHeight) / 20;
+
+                this.scrollOffset = Math.max(0, Math.min(maxScroll, this.scrollOffset - (int)amount));
+                return true;
+            }
+        }
+
+        return super.mouseScrolled(mouseX, mouseY, amount);
+    }
+*///?}
 
     /**
      * Simple method to play sounds at distance
