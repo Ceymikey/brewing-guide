@@ -25,12 +25,13 @@ import dev.ceymikey.PotionRecipeRegistry;
 import dev.ceymikey.potion.PotionCategory;
 import dev.ceymikey.potion.PotionRecipe;
 import dev.ceymikey.interfaces.ISearchFieldProvider;
+import dev.ceymikey.util.HelperUtil;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.BrewingStandScreen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.sound.PositionedSoundInstance;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -98,7 +99,7 @@ public abstract class BrewingStandScreenMixin extends HandledScreen<BrewingStand
                 topPos + 5,
                 RECIPE_PANEL_WIDTH - 10,
                 14,
-                Text.literal("Search")
+                Text.of("Search")
         );
 
         this.searchField.setMaxLength(50);
@@ -201,18 +202,18 @@ public abstract class BrewingStandScreenMixin extends HandledScreen<BrewingStand
     }
 
     @Inject(method = "render", at = @At("TAIL"))
-    private void onRender(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
+    private void onRender(MatrixStack matrices, int mouseX, int mouseY, float delta, CallbackInfo ci) {
         int leftPos = (this.width - this.backgroundWidth) / 2;
         int topPos = (this.height - this.backgroundHeight) / 2;
 
         // Draw guide background
-        context.fill(leftPos + 176, topPos, leftPos + 176 + RECIPE_PANEL_WIDTH, topPos + this.backgroundHeight, 0x80000000);
+        fill(matrices, leftPos + 176, topPos, leftPos + 176 + RECIPE_PANEL_WIDTH, topPos + this.backgroundHeight, 0x80000000);
 
         // Draw guide title
-        context.drawText(this.textRenderer, "Potion Recipes", leftPos + 180, topPos - 10, 0xFFFFFF, false);
+        this.textRenderer.draw(matrices, "Potion Recipes", leftPos + 180, topPos - 10, 0xFFFFFF);
 
         if (this.searchField != null) {
-            this.searchField.render(context, mouseX, mouseY, delta);
+            this.searchField.render(matrices, mouseX, mouseY, delta);
 
             String currentText = this.searchField.getText();
             if (!currentText.equals(this.searchText)) {
@@ -222,11 +223,11 @@ public abstract class BrewingStandScreenMixin extends HandledScreen<BrewingStand
         }
 
         // Draw guide recipes by category
-        drawRecipesByCat(context, leftPos + 176, topPos + 25, mouseX, mouseY);
+        drawRecipesByCat(matrices, leftPos + 176, topPos + 25, mouseX, mouseY);
 
         // Draw guide scrollbar if needed.
         if (this.canScroll) {
-            drawScrollbar(context, leftPos + 176 + RECIPE_PANEL_WIDTH - 10, topPos + 25, mouseX, mouseY);
+            drawScrollbar(matrices, leftPos + 176 + RECIPE_PANEL_WIDTH - 10, topPos + 25, mouseX, mouseY);
         }
 
         // Draw guide "No results" message if needed
@@ -239,12 +240,12 @@ public abstract class BrewingStandScreenMixin extends HandledScreen<BrewingStand
         }
 
         if (!hasAnyRecipes) {
-            context.drawText(this.textRenderer, "No matching recipes", leftPos + 180, topPos + 80, 0xFFFFFF, false);
+            this.textRenderer.draw(matrices, "No matching recipes", leftPos + 180, topPos + 80, 0xFFFFFF);
         }
     }
 
     @Unique
-    private void drawScrollbar(DrawContext context, int x, int y, int mouseX, int mouseY) {
+    private void drawScrollbar(MatrixStack matrices, int x, int y, int mouseX, int mouseY) {
         int scrollbarHeight = 140;
         int totalHeight = calculateTotalContentHeight();
         int visibleHeight = 140;
@@ -271,12 +272,12 @@ public abstract class BrewingStandScreenMixin extends HandledScreen<BrewingStand
         int scrollHandleY = y + (int)(scrollFraction * (scrollbarHeight - scrollHandleHeight));
 
         // Draw guide scrollbar background
-        context.fill(x, y, x + 6, y + scrollbarHeight, 0x40000000);
+        fill(matrices, x, y, x + 6, y + scrollbarHeight, 0x40000000);
 
         // Draw guide scrollbar handle
         boolean isHovered = mouseX >= x && mouseX <= x + 6 &&
                 mouseY >= scrollHandleY && mouseY <= scrollHandleY + scrollHandleHeight;
-        context.fill(x, scrollHandleY, x + 6, scrollHandleY + scrollHandleHeight,
+        fill(matrices, x, scrollHandleY, x + 6, scrollHandleY + scrollHandleHeight,
                 isHovered ? 0xFFAAAAAA : 0xFF888888);
     }
 
@@ -296,14 +297,15 @@ public abstract class BrewingStandScreenMixin extends HandledScreen<BrewingStand
 
     /* This method draws all recipes by category */
     @Unique
-    private void drawRecipesByCat(DrawContext context, int x, int y, int mouseX, int mouseY) {
+    private void drawRecipesByCat(MatrixStack matrices, int x, int y, int mouseX, int mouseY) {
         int contentWidth = RECIPE_PANEL_WIDTH - 15;
 
         // Set a fixed height for the visible area
         int visibleHeight = 140;
 
         // Enable scissor to prevent drawing outside the visible area
-        context.enableScissor(x, y, x + contentWidth, y + visibleHeight);
+        // 1.19.1 uses this method and parameters instead of enableScissor from DrawContext
+        enableScissor(x, y, x + contentWidth, y + visibleHeight);
 
         // Calculate the scroll offset in pixels (simple linear scrolling)
         int scrollY = (int)(this.scrollOffset * 20);
@@ -319,7 +321,7 @@ public abstract class BrewingStandScreenMixin extends HandledScreen<BrewingStand
             }
 
             // Draw category header
-            context.drawText(this.textRenderer, category.getDisplayName(), x + 5, currentY + 5, 0xFFFFFF, false);
+            this.textRenderer.draw(matrices, category.getDisplayName(), x + 5, currentY + 5, 0xFFFFFF);
             currentY += 20;
 
             // Draw recipes in this category
@@ -333,7 +335,7 @@ public abstract class BrewingStandScreenMixin extends HandledScreen<BrewingStand
                     // Draw highlight if hovered
                     // How else are we supposed to see where we are focusing...
                     if (isHovered) {
-                        context.fill(x, currentY, x + contentWidth, currentY + 20, 0x80FFFFFF);
+                        fill(matrices, x, currentY, x + contentWidth, currentY + 20, 0x80FFFFFF);
                     }
 
                     // Calculate better spacing to use the full width
@@ -348,16 +350,16 @@ public abstract class BrewingStandScreenMixin extends HandledScreen<BrewingStand
                     boolean hasBlazePowder = hasFuel() || findRequirementsPlayerInv(new ItemStack(Items.BLAZE_POWDER)) != -1;
 
                     // Draw recipe items with better spacing and color based on availability
-                    drawItemAvailability(context, recipe.getBasePotion(), baseX, currentY + 2, hasBasePotion);
-                    context.drawText(this.textRenderer, "+", plusX, currentY + 6, 0xFFFFFF, false);
-                    drawItemAvailability(context, recipe.getIngredient(), ingredientX, currentY + 2, hasIngredient);
+                    drawItemAvailability(matrices, recipe.getBasePotion(), baseX, currentY + 2, hasBasePotion);
+                    this.textRenderer.draw(matrices, "+", plusX, currentY + 6, 0xFFFFFF);
+                    drawItemAvailability(matrices, recipe.getIngredient(), ingredientX, currentY + 2, hasIngredient);
 
                     // Draw arrow in red if missing blaze powder
                     int arrowColor = hasBlazePowder ? 0xFFFFFF : 0xFF5555;
-                    context.drawText(this.textRenderer, "→", arrowX, currentY + 6, arrowColor, false);
+                    this.textRenderer.draw(matrices, "→", arrowX, currentY + 6, arrowColor);
 
                     // Always draw result in normal color
-                    context.drawItem(recipe.getResult(), resultX, currentY + 2);
+                    this.itemRenderer.renderInGuiWithOverrides(recipe.getResult(), resultX, currentY + 2);
                 }
 
                 currentY += 20;
@@ -367,7 +369,7 @@ public abstract class BrewingStandScreenMixin extends HandledScreen<BrewingStand
             currentY += 10;
         }
 
-        context.disableScissor();
+        disableScissor();
 
         // Draw tooltips AFTER disabling scissor to allow them to render properly
         currentY = y - scrollY;
@@ -392,11 +394,11 @@ public abstract class BrewingStandScreenMixin extends HandledScreen<BrewingStand
 
                     // Draw tooltips for individual items if hovering over them
                     if (mouseX >= baseX && mouseX <= baseX + 16 && mouseY >= currentY + 2 && mouseY <= currentY + 18) {
-                        context.drawItemTooltip(this.textRenderer, recipe.getBasePotion(), mouseX, mouseY);
+                        this.renderTooltip(matrices, recipe.getBasePotion(), mouseX, mouseY);
                     } else if (mouseX >= ingredientX && mouseX <= ingredientX + 16 && mouseY >= currentY + 2 && mouseY <= currentY + 18) {
-                        context.drawItemTooltip(this.textRenderer, recipe.getIngredient(), mouseX, mouseY);
+                        this.renderTooltip(matrices, recipe.getIngredient(), mouseX, mouseY);
                     } else if (mouseX >= resultX && mouseX <= resultX + 16 && mouseY >= currentY + 2 && mouseY <= currentY + 18) {
-                        context.drawItemTooltip(this.textRenderer, recipe.getResult(), mouseX, mouseY);
+                        this.renderTooltip(matrices, recipe.getResult(), mouseX, mouseY);
                     }
                 }
 
@@ -408,14 +410,14 @@ public abstract class BrewingStandScreenMixin extends HandledScreen<BrewingStand
         }
     }
 
-    private void drawItemAvailability(DrawContext context, ItemStack stack, int x, int y, boolean available) {
+    private void drawItemAvailability(MatrixStack matrices, ItemStack stack, int x, int y, boolean available) {
         // Draw the item normally
-        context.drawItem(stack, x, y);
+        this.itemRenderer.renderInGuiWithOverrides(stack, x, y);
 
         // If the item is not present in the players inventory,
         // draw a red overlay to show the player that they miss that item.
         if (!available) {
-            context.fill(x, y, x + 16, y + 16, 0x80FF0000);
+            fill(matrices, x, y, x + 16, y + 16, 0x80FF0000);
         }
     }
 
@@ -434,7 +436,7 @@ public abstract class BrewingStandScreenMixin extends HandledScreen<BrewingStand
         if (this.searchField != null && this.searchField.isFocused()) {
             // Handle Escape key to just unfocus the search field
             if (keyCode == 256) { // Escape key
-                this.searchField.setFocused(false);
+                this.searchField.setTextFieldFocused(false);
                 return true;
             }
 
@@ -459,7 +461,7 @@ public abstract class BrewingStandScreenMixin extends HandledScreen<BrewingStand
         // Handle search field clicks
         if (this.searchField != null && this.searchField.mouseClicked(mouseX, mouseY, button)) {
             // Force focus on the search field
-            this.searchField.setFocused(true);
+            this.searchField.setTextFieldFocused(true);
             return true;
         }
 
@@ -492,14 +494,14 @@ public abstract class BrewingStandScreenMixin extends HandledScreen<BrewingStand
                 // Check if the player has all of the required items
                 if (hasBasePotion && hasIngredient && hasBlazePowder) {
                     // Play a click sound when they do
-                    playSound(PositionedSoundInstance.master(SoundEvents.UI_BUTTON_CLICK, 1.0F));
+                    HelperUtil.getInstance().playSound(PositionedSoundInstance.master(SoundEvents.UI_BUTTON_CLICK, 1.0F));
 
                     // Try to set up the brewing stand with this recipe
                     setupBrewingStand(clickedRecipe);
                     return true;
                 } else {
                     // Player lacks items so we play the sound of depression.
-                    playSound(PositionedSoundInstance.master(SoundEvents.ENTITY_VILLAGER_NO, 1.0F));
+                    HelperUtil.getInstance().playSound(PositionedSoundInstance.master(SoundEvents.ENTITY_VILLAGER_NO, 1.0F));
                 }
             }
         }
@@ -597,32 +599,7 @@ public abstract class BrewingStandScreenMixin extends HandledScreen<BrewingStand
         return super.mouseReleased(mouseX, mouseY, button);
     }
 
-    //? if =1.20.4 {
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
-        // Only handle scrolling when mouse is over the recipe panel
-        int leftPos = (this.width - this.backgroundWidth) / 2;
-        int topPos = (this.height - this.backgroundHeight) / 2;
-
-        if (mouseX >= leftPos + 176 && mouseX <= leftPos + 176 + RECIPE_PANEL_WIDTH &&
-                mouseY >= topPos + 25 && mouseY <= topPos + 25 + 140) {
-
-            // Calculate total content height
-            int totalHeight = calculateTotalContentHeight();
-            int visibleHeight = 140;
-
-            if (totalHeight > visibleHeight) {
-                int maxScroll = (totalHeight - visibleHeight) / 20;
-
-                this.scrollOffset = Math.max(0, Math.min(maxScroll, this.scrollOffset - (int)verticalAmount));
-                return true;
-            }
-        }
-
-        return super.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount);
-    }
-    //?} elif =1.20.1 {
-    /*@Override
     public boolean mouseScrolled(double mouseX, double mouseY, double amount) {
         // Only handle scrolling when mouse is over the recipe panel
         int leftPos = (this.width - this.backgroundWidth) / 2;
@@ -644,17 +621,6 @@ public abstract class BrewingStandScreenMixin extends HandledScreen<BrewingStand
         }
 
         return super.mouseScrolled(mouseX, mouseY, amount);
-    }
-*///?}
-
-    /**
-     * Simple method to play sounds at distance
-     * Mostly used for recipe clicks.
-     */
-    @Unique
-    private void playSound(PositionedSoundInstance instance) {
-        MinecraftClient client = MinecraftClient.getInstance();
-        client.getSoundManager().play(instance);
     }
 
     // Sets up the brewing stand with the recipe

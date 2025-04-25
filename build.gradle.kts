@@ -23,6 +23,7 @@ fabricApi {
 }
 
 val loader = "0.16.13"
+val fabric_api = property("deps.fabric_api") as String
 // Fabric Properties - old sinds we now are using stonecutter
 // check these on https://fabricmc.net/develop
 val OLD_minecraft_version = "1.20.4"
@@ -45,12 +46,14 @@ dependencies {
 tasks.processResources {
 	inputs.property("version", project.version)
 	inputs.property("minecraft", stonecutter.current.version)
+	inputs.property("api", fabric_api)
 	inputs.property("loader", loader)
 
 	filesMatching("fabric.mod.json") {
 		expand(mapOf(
 			"version" to project.version,
 			"minecraft" to stonecutter.current.version,
+			"api" to fabric_api,
 			"loader" to loader
 		))
 	}
