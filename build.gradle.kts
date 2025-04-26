@@ -3,7 +3,7 @@ plugins {
 	id("maven-publish")
 }
 
-version = project.property("mod_version") as String
+version = (project.property("mod_version") as String) + "+${stonecutter.current.project}"
 group = project.property("maven_group") as String
 
 base {
@@ -16,10 +16,6 @@ repositories {
 	// Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
 	// See https://docs.gradle.org/current/userguide/declaring_repositories.html
 	// for more information about repositories.
-}
-
-fabricApi {
-	configureDataGeneration()
 }
 
 val loader = "0.16.13"
@@ -36,10 +32,6 @@ dependencies {
 	mappings("net.fabricmc:yarn:${property("deps.yarn_mappings")}:v2")
 //	modImplementation("net.fabricmc:fabric-loader:$loaderVersion")
 	modImplementation("net.fabricmc:fabric-loader:${loader}")
-
-	// Fabric API. This is technically optional, but you probably want it anyway.
-//	modImplementation("net.fabricmc.fabric-api:fabric-api:$fabricVersion")
-	modImplementation("net.fabricmc.fabric-api:fabric-api:${property("deps.fabric_api")}")
 }
 
 tasks.processResources {
