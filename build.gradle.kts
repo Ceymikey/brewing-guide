@@ -18,10 +18,6 @@ repositories {
 	// for more information about repositories.
 }
 
-fabricApi {
-	configureDataGeneration()
-}
-
 val loader = "0.16.13"
 // Fabric Properties - old sinds we now are using stonecutter
 // check these on https://fabricmc.net/develop
