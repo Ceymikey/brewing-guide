@@ -3,7 +3,7 @@ plugins {
 	id("maven-publish")
 }
 
-version = project.property("mod_version") as String
+version = (project.property("mod_version") as String) + "+${stonecutter.current.project}"
 group = project.property("maven_group") as String
 
 base {
