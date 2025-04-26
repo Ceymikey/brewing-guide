@@ -36,10 +36,6 @@ dependencies {
 	mappings("net.fabricmc:yarn:${property("deps.yarn_mappings")}:v2")
 //	modImplementation("net.fabricmc:fabric-loader:$loaderVersion")
 	modImplementation("net.fabricmc:fabric-loader:${loader}")
-
-	// Fabric API. This is technically optional, but you probably want it anyway.
-//	modImplementation("net.fabricmc.fabric-api:fabric-api:$fabricVersion")
-	modImplementation("net.fabricmc.fabric-api:fabric-api:${property("deps.fabric_api")}")
 }
 
 tasks.processResources {

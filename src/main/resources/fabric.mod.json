@@ -37,10 +37,6 @@
 	"depends": {
 		"fabricloader": ">=${loader}",
 		"minecraft": "~${minecraft}",
-		"java": ">=17",
-		"fabric-api": "*"
-	},
-	"suggests": {
-		"another-mod": "*"
+		"java": ">=17"
 	}
 }
