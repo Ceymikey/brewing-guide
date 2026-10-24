@@ -61,7 +61,7 @@ public abstract class BrewingStandScreenMixin extends HandledScreen<BrewingStand
         return recipePanel.charTyped(chr, modifiers) || super.charTyped(chr, modifiers);
     }
 
-    //? if =1.20.4 {
+    //? if >=1.20.4 {
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
         super.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount);

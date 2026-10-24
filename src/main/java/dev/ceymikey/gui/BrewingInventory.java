@@ -1,11 +1,17 @@
 package dev.ceymikey.gui;
 
 import dev.ceymikey.potion.PotionRecipe;
+//? if 1.20.6 {
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.PotionContentsComponent;
+//?}
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.PotionItem;
-import net.minecraft.potion.PotionUtil;
+//? if <=1.20.4 {
+/*import net.minecraft.potion.PotionUtil;
+*///?}
 import net.minecraft.screen.BrewingStandScreenHandler;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.screen.slot.SlotActionType;
@@ -67,9 +73,23 @@ public class BrewingInventory {
 
     private static boolean sameStack(ItemStack have, ItemStack wanted) {
         if (have.getItem() != wanted.getItem()) return false;
-        return !(wanted.getItem() instanceof PotionItem)
-                || PotionUtil.getPotion(have) == PotionUtil.getPotion(wanted);
+        return !(wanted.getItem() instanceof PotionItem) || samePotion(have, wanted);
     }
+
+    /// [...](https://fabricmc.net/2024/04/19/1205.html)
+    //? if >=1.20.5 {
+    private static boolean samePotion(ItemStack have, ItemStack wanted) {
+        return potionContents(have).potion().equals(potionContents(wanted).potion());
+    }
+
+    private static PotionContentsComponent potionContents(ItemStack stack) {
+        return stack.getOrDefault(DataComponentTypes.POTION_CONTENTS, PotionContentsComponent.DEFAULT);
+    }
+    //?} else {
+    /*private static boolean samePotion(ItemStack have, ItemStack wanted) {
+        return PotionUtil.getPotion(have) == PotionUtil.getPotion(wanted);
+    }
+    *///?}
 
     private static boolean isBlazePowder(ItemStack stack) {
         return stack.isOf(Items.BLAZE_POWDER);
