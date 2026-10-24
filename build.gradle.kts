@@ -32,6 +32,10 @@ dependencies {
 	mappings("net.fabricmc:yarn:${property("deps.yarn_mappings")}:v2")
 //	modImplementation("net.fabricmc:fabric-loader:$loaderVersion")
 	modImplementation("net.fabricmc:fabric-loader:${loader}")
+
+	// Source: https://mvnrepository.com/artifact/org.projectlombok/lombok
+	compileOnly("org.projectlombok:lombok:1.18.48")
+	annotationProcessor("org.projectlombok:lombok:1.18.48")
 }
 
 tasks.processResources {

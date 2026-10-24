@@ -1,28 +1,5 @@
-/*
- * This file is part of BrewingGuide (https://github.com/Ceymikey/brewing-guide)
- *
- * Copyright © 2025 Ceymikey.
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of this
- * software and associated documentation files (the "Software"), to deal in the Software
- * without restriction, including without limitation the rights to use, copy, modify, merge,
- * publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons
- * to whom the Software is furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all copies
- * or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
- * INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
- * PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
- * FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
- * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
- * DEALINGS IN THE SOFTWARE.
- */
-package dev.ceymikey;
+package dev.ceymikey.potion;
 
-import dev.ceymikey.potion.PotionCategory;
-import dev.ceymikey.potion.PotionRecipe;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.potion.Potions;
@@ -34,21 +11,22 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/// https://minecraft.wiki/w/Potion#Variants
 public class PotionRecipeRegistry {
-    private static final List<PotionRecipe> allRecipes = new ArrayList<>();
-    private static final Map<PotionCategory, List<PotionRecipe>> recipesByCategory = new HashMap<>();
+    private static PotionRecipeRegistry instance;
+    private final List<PotionRecipe> allRecipes = new ArrayList<>();
+    private final Map<PotionCategory, List<PotionRecipe>> recipesByCategory = new HashMap<>();
 
     // Basically a glass bottle with water simplified...
-    private static final ItemStack WATER_BOTTLE = PotionUtil.setPotion(new ItemStack(Items.POTION), Potions.WATER);
+    private final ItemStack WATER_BOTTLE = PotionUtil.setPotion(new ItemStack(Items.POTION), Potions.WATER);
 
-    static {
-        // Initialize category lists
+    private PotionRecipeRegistry() {
         for (PotionCategory category : PotionCategory.values()) {
             recipesByCategory.put(category, new ArrayList<>());
         }
     }
 
-    public static void registerVanillaRecipes() {
+    public void registerVanillaRecipes() {
         // Base potions
         register(WATER_BOTTLE, new ItemStack(Items.NETHER_WART),
                 PotionUtil.setPotion(new ItemStack(Items.POTION), Potions.AWKWARD),
@@ -217,46 +195,46 @@ public class PotionRecipeRegistry {
                 PotionUtil.setPotion(new ItemStack(Items.POTION), Potions.LONG_TURTLE_MASTER),
                 PotionCategory.EXTENDED);
 
-        // Enhanced potions
+        // Upgraded power
         register(PotionUtil.setPotion(new ItemStack(Items.POTION), Potions.LEAPING),
                 new ItemStack(Items.GLOWSTONE_DUST),
                 PotionUtil.setPotion(new ItemStack(Items.POTION), Potions.STRONG_LEAPING),
-                PotionCategory.ENHANCED);
+                PotionCategory.UPGRADED);
 
         register(PotionUtil.setPotion(new ItemStack(Items.POTION), Potions.SWIFTNESS),
                 new ItemStack(Items.GLOWSTONE_DUST),
                 PotionUtil.setPotion(new ItemStack(Items.POTION), Potions.STRONG_SWIFTNESS),
-                PotionCategory.ENHANCED);
+                PotionCategory.UPGRADED);
 
         register(PotionUtil.setPotion(new ItemStack(Items.POTION), Potions.POISON),
                 new ItemStack(Items.GLOWSTONE_DUST),
                 PotionUtil.setPotion(new ItemStack(Items.POTION), Potions.STRONG_POISON),
-                PotionCategory.ENHANCED);
+                PotionCategory.UPGRADED);
 
         register(PotionUtil.setPotion(new ItemStack(Items.POTION), Potions.REGENERATION),
                 new ItemStack(Items.GLOWSTONE_DUST),
                 PotionUtil.setPotion(new ItemStack(Items.POTION), Potions.STRONG_REGENERATION),
-                PotionCategory.ENHANCED);
+                PotionCategory.UPGRADED);
 
         register(PotionUtil.setPotion(new ItemStack(Items.POTION), Potions.STRENGTH),
                 new ItemStack(Items.GLOWSTONE_DUST),
                 PotionUtil.setPotion(new ItemStack(Items.POTION), Potions.STRONG_STRENGTH),
-                PotionCategory.ENHANCED);
+                PotionCategory.UPGRADED);
 
         register(PotionUtil.setPotion(new ItemStack(Items.POTION), Potions.HEALING),
                 new ItemStack(Items.GLOWSTONE_DUST),
                 PotionUtil.setPotion(new ItemStack(Items.POTION), Potions.STRONG_HEALING),
-                PotionCategory.ENHANCED);
+                PotionCategory.UPGRADED);
 
         register(PotionUtil.setPotion(new ItemStack(Items.POTION), Potions.HARMING),
                 new ItemStack(Items.GLOWSTONE_DUST),
                 PotionUtil.setPotion(new ItemStack(Items.POTION), Potions.STRONG_SLOWNESS),
-                PotionCategory.ENHANCED);
+                PotionCategory.UPGRADED);
 
         register(PotionUtil.setPotion(new ItemStack(Items.POTION), Potions.TURTLE_MASTER),
                 new ItemStack(Items.GLOWSTONE_DUST),
                 PotionUtil.setPotion(new ItemStack(Items.POTION), Potions.STRONG_TURTLE_MASTER),
-                PotionCategory.ENHANCED);
+                PotionCategory.UPGRADED);
 
         // Conversion recipes (using Fermented Spider Eye)
         register(PotionUtil.setPotion(new ItemStack(Items.POTION), Potions.NIGHT_VISION),
@@ -277,7 +255,7 @@ public class PotionRecipeRegistry {
         register(PotionUtil.setPotion(new ItemStack(Items.POTION), Potions.STRONG_HEALING),
                 new ItemStack(Items.FERMENTED_SPIDER_EYE),
                 PotionUtil.setPotion(new ItemStack(Items.POTION), Potions.STRONG_HARMING),
-                PotionCategory.ENHANCED);
+                PotionCategory.UPGRADED);
 
         register(PotionUtil.setPotion(new ItemStack(Items.POTION), Potions.POISON),
                 new ItemStack(Items.FERMENTED_SPIDER_EYE),
@@ -292,28 +270,24 @@ public class PotionRecipeRegistry {
         register(PotionUtil.setPotion(new ItemStack(Items.POTION), Potions.STRONG_POISON),
                 new ItemStack(Items.FERMENTED_SPIDER_EYE),
                 PotionUtil.setPotion(new ItemStack(Items.POTION), Potions.STRONG_HARMING),
-                PotionCategory.ENHANCED);
+                PotionCategory.UPGRADED);
     }
 
     /* Method to register a potion recipe */
-    public static void register(ItemStack basePotion, ItemStack ingredient, ItemStack result, PotionCategory category) {
+    public void register(ItemStack basePotion, ItemStack ingredient, ItemStack result, PotionCategory category) {
         PotionRecipe recipe = new PotionRecipe(basePotion, ingredient, result, category);
         allRecipes.add(recipe);
         recipesByCategory.get(category).add(recipe);
     }
 
-    /* Returns all registered recipes. */
-    public static List<PotionRecipe> getAllRecipes() {
+    public List<PotionRecipe> getAllRecipes() {
         return Collections.unmodifiableList(allRecipes);
     }
 
-    /* Method to get all registered potion recipes */
-    public static List<PotionRecipe> getRecipesByCategory(PotionCategory category) {
-        return Collections.unmodifiableList(recipesByCategory.getOrDefault(category, new ArrayList<>()));
-    }
-
-    /* Returns all categories of potion recipes */
-    public static List<PotionCategory> getCategories() {
-        return List.of(PotionCategory.values());
+    public static PotionRecipeRegistry getInstance() {
+        if (instance == null) {
+            instance = new PotionRecipeRegistry();
+        }
+        return instance;
     }
 }
