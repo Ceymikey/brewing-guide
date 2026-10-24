@@ -1,7 +1,7 @@
 package dev.ceymikey.gui;
 
 import dev.ceymikey.potion.PotionRecipe;
-//? if 1.20.6 {
+//? if >=1.20.6 {
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.PotionContentsComponent;
 //?}

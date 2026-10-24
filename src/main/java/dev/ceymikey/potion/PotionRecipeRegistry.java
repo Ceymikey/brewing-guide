@@ -1,6 +1,6 @@
 package dev.ceymikey.potion;
 
-//? if 1.20.6 {
+//? if >=1.20.6 {
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.PotionContentsComponent;
 //?}
@@ -137,6 +137,28 @@ public class PotionRecipeRegistry {
                 new ItemStack(Items.FERMENTED_SPIDER_EYE),
                 potion(Items.POTION, Potions.WEAKNESS),
                 PotionCategory.EFFECT);
+
+        //? if >= 1.21.1 {
+        register(potion(Items.POTION, Potions.AWKWARD),
+                new ItemStack(Items.SLIME_BLOCK),
+                potion(Items.POTION, Potions.OOZING),
+                PotionCategory.EFFECT);
+
+        register(potion(Items.POTION, Potions.AWKWARD),
+                new ItemStack(Items.STONE),
+                potion(Items.POTION, Potions.INFESTED),
+                PotionCategory.EFFECT);
+
+        register(potion(Items.POTION, Potions.AWKWARD),
+                new ItemStack(Items.COBWEB),
+                potion(Items.POTION, Potions.WEAVING),
+                PotionCategory.EFFECT);
+
+        register(potion(Items.POTION, Potions.AWKWARD),
+                new ItemStack(Items.BREEZE_ROD),
+                potion(Items.POTION, Potions.WIND_CHARGED),
+                PotionCategory.EFFECT);
+        //?}
 
         // Extended duration potions
         register(potion(Items.POTION, Potions.NIGHT_VISION),
