@@ -1,5 +1,5 @@
 plugins {
-	id("fabric-loom") version "1.7-SNAPSHOT"
+	id("fabric-loom") version "1.19-SNAPSHOT"
 	id("maven-publish")
 }
 
@@ -49,13 +49,6 @@ tasks.processResources {
 			"minecraft" to stonecutter.current.version,
 			"loader" to loader
 		))
-	}
-}
-
-loom {
-	runConfigs.all {
-		ideConfigGenerated(true) // Run configurations are not created for subprojects by default
-		runDir = "../../run" // Use a shared run folder and create separate worlds
 	}
 }
 
