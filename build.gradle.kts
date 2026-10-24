@@ -18,19 +18,11 @@ repositories {
 	// for more information about repositories.
 }
 
-val loader = "0.16.13"
-// Fabric Properties - old sinds we now are using stonecutter
-// check these on https://fabricmc.net/develop
-val OLD_minecraft_version = "1.20.4"
-val OLD_yarn_mappings = "1.20.4+build.3"
-val OLD_fabric_api = "0.97.2+1.20.4"
+val loader = "0.20.1"
 
 dependencies {
-//	minecraft("com.mojang:minecraft:$minecraftVersion")
 	minecraft("com.mojang:minecraft:${stonecutter.current.project}")
-//	mappings("net.fabricmc:yarn:$yarnMappings:v2")
 	mappings("net.fabricmc:yarn:${property("deps.yarn_mappings")}:v2")
-//	modImplementation("net.fabricmc:fabric-loader:$loaderVersion")
 	modImplementation("net.fabricmc:fabric-loader:${loader}")
 
 	// Source: https://mvnrepository.com/artifact/org.projectlombok/lombok

@@ -6,13 +6,12 @@ pluginManagement {
 		}
 		mavenCentral()
 		gradlePluginPortal()
-		maven { url = uri("https://maven.kikugie.dev/releases") }
 		maven { url = uri("https://maven.kikugie.dev/snapshots") }
 	}
 }
 
 plugins {
-	id("dev.kikugie.stonecutter") version "0.6-beta.2"
+	id("dev.kikugie.stonecutter") version "0.9.8"
 }
 
 stonecutter {
