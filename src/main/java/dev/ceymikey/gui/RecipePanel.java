@@ -29,6 +29,15 @@ public class RecipePanel {
     private static final int RESULT_X = 85;
     private static final int ITEM_SIZE = 16;
 
+    /// Fabricmc replaced RBG with ARGB after 1.21.6
+    //? if >=1.21.6 {
+    private static final int PRIMARY_COLOR = 0xFFFFFFFF;
+    private static final int RED_COLOR = 0xFFFF5555;
+    //?} else {
+    /*private static final int PRIMARY_COLOR = 0xFFFFFF;
+    private static final int RED_COLOR = 0xFF5555;
+    *///?}
+
     private final MinecraftClient client = MinecraftClient.getInstance();
     private final TextRenderer textRenderer;
     private final BrewingInventory inventory;
@@ -81,11 +90,11 @@ public class RecipePanel {
 
     public void render(DrawContext ctx, int mouseX, int mouseY, float delta) {
         ctx.fill(x, y, x + WIDTH, y + height, 0x80000000);
-        ctx.drawText(textRenderer, "Potion Recipes", x + 4, y - 10, 0xFFFFFF, false);
+        ctx.drawText(textRenderer, "Potion Recipes", x + 4, y - 10, PRIMARY_COLOR, false);
         searchField.render(ctx, mouseX, mouseY, delta);
 
         if (list.getRows().isEmpty()) {
-            ctx.drawText(textRenderer, "No matching recipes", x + 4, y + 80, 0xFFFFFF, false);
+            ctx.drawText(textRenderer, "No matching recipes", x + 4, y + 80, PRIMARY_COLOR, false);
             return;
         }
 
@@ -98,7 +107,7 @@ public class RecipePanel {
             if (contentY + ROW_HEIGHT < top() || contentY > top() + VIEW_HEIGHT) continue;
 
             if (row.isHeader()) {
-                ctx.drawText(textRenderer, row.category().getDisplayName(), x + 5, contentY + 5, 0xFFFFFF, false);
+                ctx.drawText(textRenderer, row.category().getDisplayName(), x + 5, contentY + 5, PRIMARY_COLOR, false);
             } else {
                 drawEntry(ctx, row.recipe(), contentY, blazeOk, row == hovered);
             }
@@ -113,15 +122,15 @@ public class RecipePanel {
         if (hovered) ctx.fill(x, contentY, x + CONTENT_WIDTH, contentY + ROW_HEIGHT, 0x80FFFFFF);
 
         drawIngredient(ctx, recipe.getBasePotion(), x + BASE_X, contentY + 2);
-        ctx.drawText(textRenderer, "+", x + PLUS_X, contentY + 6, 0xFFFFFF, false);
+        ctx.drawText(textRenderer, "+", x + PLUS_X, contentY + 6, PRIMARY_COLOR, false);
         drawIngredient(ctx, recipe.getIngredient(), x + INGREDIENT_X, contentY + 2);
-        ctx.drawText(textRenderer, "→", x + ARROW_X, contentY + 6, blazeOk ? 0xFFFFFF : 0xFF5555, false);
+        ctx.drawText(textRenderer, "→", x + ARROW_X, contentY + 6, blazeOk ? PRIMARY_COLOR : RED_COLOR, false);
         ctx.drawItem(recipe.getResult(), x + RESULT_X, contentY + 2);
     }
 
     private void drawIngredient(DrawContext ctx, ItemStack stack, int itemX, int itemY) {
-        ctx.drawItem(stack, itemX, itemY);
         if (!inventory.has(stack)) ctx.fill(itemX, itemY, itemX + ITEM_SIZE, itemY + ITEM_SIZE, 0x80FF0000);
+        ctx.drawItem(stack, itemX, itemY);
     }
 
     private void drawTooltip(DrawContext ctx, Row row, int mouseX, int mouseY) {
