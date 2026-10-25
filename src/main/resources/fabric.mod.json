@@ -8,7 +8,7 @@
 		"Ceymikey"
 	],
 	"contact": {
-		"homepage": "https://ceymikey.dev/",
+		"homepage": "https://modrinth.com/mod/brewing-guide-mod",
 		"sources": "https://github.com/Ceymikey/brewing-guide",
 		"issues": "https://github.com/Ceymikey/brewing-guide/issues",
 		"discord": "https://discord.gg/MPuQEeZB4w"
@@ -34,6 +34,6 @@
 	"depends": {
 		"fabricloader": ">=${loader}",
 		"minecraft": "~${minecraft}",
-		"java": ">=17"
+		"java": ">=${java}"
 	}
 }

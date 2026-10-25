@@ -3,11 +3,18 @@ plugins {
 	id("maven-publish")
 }
 
-version = (project.property("mod_version") as String) + "+${stonecutter.current.project}"
+version = (project.property("mod_version") as String) + "+${property("deps.minecraft")}"
 group = project.property("maven_group") as String
 
 base {
 	archivesName.set(project.property("archives_base_name") as String)
+}
+
+val requiredJava = when {
+	sc.current.parsed >= "1.20.6" -> JavaVersion.VERSION_21
+	sc.current.parsed >= "1.18" -> JavaVersion.VERSION_17
+	sc.current.parsed >= "1.17" -> JavaVersion.VERSION_16
+	else -> JavaVersion.VERSION_1_8
 }
 
 repositories {
@@ -34,18 +41,16 @@ tasks.processResources {
 	inputs.property("version", project.version)
 	inputs.property("minecraft", stonecutter.current.version)
 	inputs.property("loader", loader)
+	inputs.property("java", requiredJava)
 
 	filesMatching("fabric.mod.json") {
 		expand(mapOf(
 			"version" to project.version,
 			"minecraft" to stonecutter.current.version,
-			"loader" to loader
+			"loader" to loader,
+			"java" to requiredJava
 		))
 	}
-}
-
-tasks.withType<JavaCompile>().configureEach {
-	options.release.set(17)
 }
 
 java {
@@ -54,8 +59,8 @@ java {
 	// If you remove this line, sources will not be generated.
 	withSourcesJar()
 
-	sourceCompatibility = JavaVersion.VERSION_17
-	targetCompatibility = JavaVersion.VERSION_17
+	sourceCompatibility = requiredJava
+	targetCompatibility = requiredJava
 }
 
 tasks.jar {
