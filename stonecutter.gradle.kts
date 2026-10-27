@@ -1,7 +1,7 @@
 plugins {
     id("dev.kikugie.stonecutter")
 }
-stonecutter active "1.21.6"
+stonecutter active "1.21.9"
 
 /// Was murdered in 0.7
 /// https://stonecutter.kikugie.dev/blog/wall/0.7-update#chiseled-tasks
