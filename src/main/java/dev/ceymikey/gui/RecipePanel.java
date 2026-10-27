@@ -14,12 +14,14 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import org.lwjgl.glfw.GLFW;
 
-import static dev.ceymikey.gui.RecipePanelLayout.CONTENT_WIDTH;
-import static dev.ceymikey.gui.RecipePanelLayout.ROW_HEIGHT;
-import static dev.ceymikey.gui.RecipePanelLayout.TOP_PADDING;
-import static dev.ceymikey.gui.RecipePanelLayout.VIEW_HEIGHT;
-import static dev.ceymikey.gui.RecipePanelLayout.WIDTH;
-import static dev.ceymikey.gui.RecipePanelLayout.within;
+import static dev.ceymikey.gui.RecipePanelLayout.*;
+
+//? if >=1.21.9 {
+import net.minecraft.client.gui.Click;
+import net.minecraft.client.input.CharInput;
+import net.minecraft.client.input.KeyInput;
+import net.minecraft.client.input.MouseInput;
+//?}
 
 public class RecipePanel {
     private static final int BASE_X = 5;
@@ -43,7 +45,8 @@ public class RecipePanel {
     private final BrewingInventory inventory;
     private final RecipeList list;
     private final ScrollBar scrollBar;
-    @Getter private final TextFieldWidget searchField;
+    @Getter
+    private final TextFieldWidget searchField;
 
     private int x, y, height;
 
@@ -150,10 +153,18 @@ public class RecipePanel {
     }
 
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (searchField.mouseClicked(mouseX, mouseY, button)) {
+        //? if >=1.21.9 {
+        Click click = new Click(mouseX, mouseY, new MouseInput(button, 0));
+        if (searchField.mouseClicked(click, false)) {
             searchField.setFocused(true);
             return true;
         }
+        //?} else {
+        /*if (searchField.mouseClicked(mouseX, mouseY, button)) {
+            searchField.setFocused(true);
+            return true;
+        }
+        *///?}
         if (button != 0) return false;
         if (scrollBar.mouseClicked(mouseX, mouseY)) return true;
 
@@ -191,12 +202,22 @@ public class RecipePanel {
             searchField.setFocused(false);
             return true;
         }
-        searchField.keyPressed(keyCode, scanCode, modifiers);
+        //? if >=1.21.9 {
+        KeyInput input = new KeyInput(keyCode, scanCode, modifiers);
+        searchField.keyPressed(input);
+        //?} else {
+        /*searchField.keyPressed(keyCode, scanCode, modifiers);
+         *///?}
         return true;
     }
 
     public boolean charTyped(char chr, int modifiers) {
-        return searchField.isFocused() && searchField.charTyped(chr, modifiers);
+        //? if >=1.21.9 {
+        CharInput input = new CharInput(chr, modifiers);
+        return searchField.isFocused() && searchField.charTyped(input);
+        //?} else {
+        /*return searchField.isFocused() && searchField.charTyped(chr, modifiers);
+         *///?}
     }
 
     private void playSound(PositionedSoundInstance instance) {

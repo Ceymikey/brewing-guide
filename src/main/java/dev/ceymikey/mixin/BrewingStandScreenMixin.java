@@ -13,6 +13,12 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+//? if >=1.21.9 {
+import net.minecraft.client.gui.Click;
+import net.minecraft.client.input.CharInput;
+import net.minecraft.client.input.KeyInput;
+//?}
+
 @Mixin(BrewingStandScreen.class)
 public abstract class BrewingStandScreenMixin extends HandledScreen<BrewingStandScreenHandler> {
     @Unique
@@ -36,11 +42,37 @@ public abstract class BrewingStandScreenMixin extends HandledScreen<BrewingStand
         recipePanel.render(context, mouseX, mouseY, delta);
     }
 
+    //? if >=1.21.9 {
     @Override
+    public boolean mouseClicked(Click click, boolean doubled) {
+        return recipePanel.mouseClicked(click.x(), click.y(), click.button()) || super.mouseClicked(click, doubled);
+    }
+
+    @Override
+    public boolean mouseDragged(Click click, double offsetX, double offsetY) {
+        return recipePanel.mouseDragged(click.y()) || super.mouseDragged(click, offsetX, offsetY);
+    }
+
+    @Override
+    public boolean mouseReleased(Click click) {
+        return recipePanel.mouseReleased() || super.mouseReleased(click);
+    }
+
+    @Override
+    public boolean keyPressed(KeyInput input) {
+        return recipePanel.keyPressed(input.getKeycode(), input.scancode(), input.modifiers()) || super.keyPressed(input);
+    }
+
+    @Override
+    public boolean charTyped(CharInput input) {
+        return recipePanel.charTyped((char) input.codepoint(), input.modifiers()) || super.charTyped(input);
+    }
+
+    //?} else {
+    /*@Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         return recipePanel.mouseClicked(mouseX, mouseY, button) || super.mouseClicked(mouseX, mouseY, button);
     }
-
     @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
         return recipePanel.mouseDragged(mouseY) || super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
@@ -60,6 +92,7 @@ public abstract class BrewingStandScreenMixin extends HandledScreen<BrewingStand
     public boolean charTyped(char chr, int modifiers) {
         return recipePanel.charTyped(chr, modifiers) || super.charTyped(chr, modifiers);
     }
+    *///?}
 
     //? if >=1.20.4 {
     @Override
